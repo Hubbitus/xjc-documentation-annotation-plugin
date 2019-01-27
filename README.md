@@ -10,12 +10,12 @@ Said we have this object described in XSD:
 ```
 <xs:complexType name="CadastralBlock">
 	<xs:annotation>
-		<xs:documentation>Кадастровый квартал</xs:documentation>
+		<xs:documentation>Cadastral quarter</xs:documentation>
 	</xs:annotation>
 	<xs:sequence>
 		<xs:element name="number" type="xs:string">
 			<xs:annotation>
-				<xs:documentation>Кадастровый номер</xs:documentation>
+				<xs:documentation>Cadastral number</xs:documentation>
 			</xs:annotation>
 		</xs:element>
 </xs:complexType>
@@ -39,9 +39,9 @@ So it what these plugin do!
 So you get:
 
 ```java
-@XsdInfo(name = "Кадастровый квартал", xsdElementPart = "<complexType name=\"CadastralBlock\">\n  <complexContent>\n    <restriction base=\"{http://www.w3.org/2001/XMLSchema}anyType\">\n      <sequence>\n        <element name=\"number\" type=\"{http://www.w3.org/2001/XMLSchema}string\"/>\n        <element name=\"Orient\" type=\"{http://www.w3.org/2001/XMLSchema}string\" minOccurs=\"0\"/>\n      </sequence>\n      <attribute name=\"_id\" use=\"required\" type=\"{http://www.w3.org/2001/XMLSchema}token\" />\n    </restriction>\n  </complexContent>\n</complexType>")
+@XsdInfo(name = "Cadastral quarter", xsdElementPart = "<complexType name=\"CadastralBlock\">\n  <complexContent>\n    <restriction base=\"{http://www.w3.org/2001/XMLSchema}anyType\">\n      <sequence>\n        <element name=\"number\" type=\"{http://www.w3.org/2001/XMLSchema}string\"/></sequence>\n      </restriction>\n  </complexContent></complexType>")
 public class CadastralBlock {
-    @XsdInfo(name = "Кадастровый номер")
+    @XsdInfo(name = "Cadastral number")
     protected String number;
 }
 ```
@@ -49,7 +49,7 @@ public class CadastralBlock {
 ## How to use
 
 ### Manual call in commandline
-If you want run it manualy ensure jar class with plugin in run classpath and just add option `-XPluginDescriptionAnnotation`. F.e.:
+If you want run it manually ensure jar class with plugin in run classpath and just add option `-XPluginDescriptionAnnotation`. F.e.:
 
     xjc -npa -no-header -d src/main/generated-java/ -p xsd.generated -XPluginDescriptionAnnotation scheme.xsd
 

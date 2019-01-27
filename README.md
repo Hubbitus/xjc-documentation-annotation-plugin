@@ -9,7 +9,7 @@ Why that plugin born you may find at the end of readme, but now lets look what i
 
 Said we have this object described in XSD:
 
-```
+```xml
 <xs:complexType name="CadastralBlock">
 	<xs:annotation>
 		<xs:documentation>Cadastral quarter</xs:documentation>

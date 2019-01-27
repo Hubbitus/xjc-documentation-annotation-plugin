@@ -35,12 +35,12 @@ dependencies {
 // Artifacts publishing into central OSS repository
 // http://central.sonatype.org/pages/gradle.html
 task javadocJar(type: Jar) {
-	classifier = 'javadoc'
+	archiveClassifier.set('javadoc') // https://discuss.gradle.org/t/publishing-jars-with-classifiers-after-v5-0/30144/2
 	from javadoc
 }
 
 task sourcesJar(type: Jar) {
-	classifier = 'sources'
+	archiveClassifier.set('sources')
 	from sourceSets.main.allSource
 }
 

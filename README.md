@@ -1,3 +1,5 @@
+[![Autobuild Status](https://travis-ci.org/Hubbitus/xjc-documentation-annotation-plugin.svg?branch=master)](https://travis-ci.org/Hubbitus/xjc-documentation-annotation-plugin)
+
 XJC plugin to bring XSD descriptions into annotations of generated classes
 ==========================================================================
 
@@ -34,7 +36,7 @@ public class CadastralBlock {
 ```
 
 **But in my case I want known how to class and fields was named in source file!**
-So it what these plugin do!
+So it what this plugin do!
 
 So you get:
 
@@ -75,6 +77,10 @@ Build:
 Run tests:
 
     ./gradlew test
+
+# Gradle
+
+TODO: Request to inclusion into Maven Central: https://issues.sonatype.org/browse/OSSRH-45892
 
 ## Rationale
 For our integration we have task load big amount of XSD files into MDM software (proprietary [Unidata](https://unidata-platform.com/)).

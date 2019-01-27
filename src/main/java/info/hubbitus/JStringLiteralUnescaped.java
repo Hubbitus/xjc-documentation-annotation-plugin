@@ -5,7 +5,7 @@ import com.sun.codemodel.JFormatter;
 
 /**
  * String literal unescaped.
- * Copied class {@see com.sun.codemodel.JStringLiteral} and slightly modified.
+ * Copied class {@link com.sun.codemodel.JStringLiteral} and slightly modified.
  * We can't just extend it because of non-public constructor
  *
  * @author Pavel Alexeev
@@ -37,8 +37,9 @@ public class JStringLiteralUnescaped extends JExpressionImpl {
      *
      * Escapes the given string, then surrounds it by the specified
      * quotation mark.
+     * @return String which proper quite literals, but not Unicode values
      */
-    public static String quotify(char quote, String s) {
+    private static String quotify(char quote, String s) {
         int n = s.length();
         StringBuilder sb = new StringBuilder(n + 2);
         sb.append(quote);

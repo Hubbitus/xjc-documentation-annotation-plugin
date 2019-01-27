@@ -14,16 +14,20 @@ public @interface XsdInfo {
 	/**
 	 * Russian name of class or field from
 	 * <pre>
+	 *{@code
 	 * 	<xs:annotation>
 	 * 		<xs:documentation>Идентификатор</xs:documentation>
 	 * 	</xs:annotation>
+	 * }
 	 * </pre>
+	 * @return Class or field name
 	 */
 	String name();
 
 	/**
 	 * XSD XML element declaration as string. Like:
 	 * <pre>
+	 * {@code
 	 * <complexType name="TInterdepStatement">
 	 *   <complexContent>
 	 *     <restriction base="{http://rosreestr.ru/services/v0.18/TInterdepStatement}TBasicInterdepStatement">
@@ -35,7 +39,9 @@ public @interface XsdInfo {
 	 *     </restriction>
 	 *   </complexContent>
 	 * </complexType>
+	 * }
 	 * </pre>
+	 * @return XSD element representing class
 	 */
 	String xsdElementPart() default "";
 }

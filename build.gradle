@@ -1,6 +1,10 @@
 plugins {
-    id 'java'
-    id 'groovy' // Testing
+	id 'java'
+	id 'groovy' // Testing
+	// http://central.sonatype.org/pages/gradle.html
+	id 'maven'
+	id 'idea'
+	id 'signing'
 }
 
 group 'info.hubbitus'
@@ -9,20 +13,88 @@ version '1.0-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
-    mavenCentral()
+	mavenCentral()
 }
 
 dependencies {
-    compile "com.sun.xml.bind:jaxb-core:2.3.0.1"
-    compile "javax.xml.bind:jaxb-api:${versionJaxbIpi}"
-    testCompile "javax.xml.bind:jaxb-api:${versionJaxbIpi}"
-    compile "com.sun.xml.bind:jaxb-xjc:${versionJaxb}"
-    compile "com.sun.xml.bind:jaxb-impl:${versionJaxb}"
+	compile 'com.sun.xml.bind:jaxb-core:2.3.0.1'
+	compile "javax.xml.bind:jaxb-api:${versionJaxbIpi}"
+	testCompile "javax.xml.bind:jaxb-api:${versionJaxbIpi}"
+	compile "com.sun.xml.bind:jaxb-xjc:${versionJaxb}"
+	compile "com.sun.xml.bind:jaxb-impl:${versionJaxb}"
 
-    // Logging
-    compile "org.slf4j:slf4j-api:${versionSlf4j}"
-    compile "ch.qos.logback:logback-classic:${versionLogback}"
+	// Logging
+	compile "org.slf4j:slf4j-api:${versionSlf4j}"
+	compile "ch.qos.logback:logback-classic:${versionLogback}"
 
-    testCompile "org.codehaus.groovy:groovy:${versionGroovy}"
-    testCompile "org.spockframework:spock-core:${versionSpock}"
+	testCompile "org.codehaus.groovy:groovy:${versionGroovy}"
+	testCompile "org.spockframework:spock-core:${versionSpock}"
 }
+
+///////////////////////////////////////////////////////////////
+// Artifacts publishing into central OSS repository
+// http://central.sonatype.org/pages/gradle.html
+task javadocJar(type: Jar) {
+	classifier = 'javadoc'
+	from javadoc
+}
+
+task sourcesJar(type: Jar) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+artifacts {
+	archives javadocJar, sourcesJar
+}
+signing {
+//    required { gradle.taskGraph.hasTask("uploadArchives") } // https://groups.google.com/forum/#!topic/gaelyk/WfdEDBOzIOM
+	sign configurations.archives
+}
+
+
+uploadArchives {
+	repositories {
+		mavenDeployer {
+			beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+			repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+				authentication(userName: ossrhUsername, password: ossrhPassword)
+			}
+
+			snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+				authentication(userName: ossrhUsername, password: ossrhPassword)
+			}
+
+			pom.project {
+				name project.name
+				packaging 'jar'
+				description 'XJC plugin to bring XSD descriptions into annotations of generated classes'
+				url 'https://github.com/Hubbitus/xjc-documentation-annotation-plugin'
+
+				scm {
+					connection 'scm:git:https://github.com/Hubbitus/xjc-documentation-annotation-plugin.git'
+					developerConnection 'scm:git:git@github.com:Hubbitus/xjc-documentation-annotation-plugin.git'
+					url 'https://github.com/Hubbitus/xjc-documentation-annotation-plugin'
+				}
+
+				licenses {
+					license {
+						name 'MIT'
+						url 'https://opensource.org/licenses/MIT'
+					}
+				}
+
+				developers {
+					developer {
+						id 'Hubbitus'
+						name 'Pavel Alexeev'
+						email 'Pahan@Hubbitus.info'
+					}
+				}
+			}
+		}
+	}
+}
+// /Artifacts publishing into central OSS repository
+////////////////////////////////////////////////////

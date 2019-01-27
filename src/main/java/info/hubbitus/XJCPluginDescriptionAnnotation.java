@@ -28,11 +28,11 @@ import org.xml.sax.ErrorHandler;
 
 
 /**
- * XJC plugin to place XSD documentation annotations (<xs:annotation><xs:documentation>) for runtime usage on classes and fields.
+ * XJC plugin to place XSD documentation annotations ({@code <xs:annotation><xs:documentation>}) for runtime usage on classes and fields.
  *
  * F.e. for XSD declaration:
  *
- * <code>
+ * <pre>{@code
  * 	<xs:complexType name="CadastralBlock">
  * 		<xs:annotation>
  * 			<xs:documentation>Кадастровый квартал</xs:documentation>
@@ -51,28 +51,28 @@ import org.xml.sax.ErrorHandler;
  * 		</xs:sequence>
  * 		<xs:attribute name="_id" type="xs:token" use="required"/>
  * 	</xs:complexType>
- * </code>
+ * }</pre>
  * 	Will be generated (stripped, base annotations mad methods omitted):
- * <code>
- *        @XsdInfo(name = "Кадастровый квартал", xsdElementPart = "<complexType name=\"CadastralBlock\">\n  <complexContent>\n    <restriction base=\"{http://www.w3.org/2001/XMLSchema}anyType\">\n      <sequence>\n        <element name=\"number\" type=\"{http://rosreestr.ru/services/v0.1/commons/TObject}TCadastralNumberBlock\"/>\n        <element name=\"Orient\" type=\"{http://www.w3.org/2001/XMLSchema}string\" minOccurs=\"0\"/>\n      </sequence>\n      <attribute name=\"_id\" use=\"required\" type=\"{http://www.w3.org/2001/XMLSchema}token\" />\n    </restriction>\n  </complexContent>\n</complexType>\n")
+ * <pre>{@code
+ *     \@XsdInfo(name = "Кадастровый квартал", xsdElementPart = "<complexType name=\"CadastralBlock\">\n  <complexContent>\n    <restriction base=\"{http://www.w3.org/2001/XMLSchema}anyType\">\n      <sequence>\n        <element name=\"number\" type=\"{http://rosreestr.ru/services/v0.1/commons/TObject}TCadastralNumberBlock\"/>\n        <element name=\"Orient\" type=\"{http://www.w3.org/2001/XMLSchema}string\" minOccurs=\"0\"/>\n      </sequence>\n      <attribute name=\"_id\" use=\"required\" type=\"{http://www.w3.org/2001/XMLSchema}token\" />\n    </restriction>\n  </complexContent>\n</complexType>\n")
  * public class CadastralBlock {
- *
- *     @XsdInfo(name = "Кадастровый номер")
+ *     \@XsdInfo(name = "Кадастровый номер")
  *     protected TCadastralNumberBlock number;
- *     @XsdInfo(name = "Ориентиры")
+ *     \@XsdInfo(name = "Ориентиры")
  *     protected String orient;
- *     @XmlAttribute(name = "_id", required = true)
- *     @XmlSchemaType(name = "token")
- *     @XsdInfo(name = "")
+ *     \@XmlAttribute(name = "_id", required = true)
+ *     \@XmlSchemaType(name = "token")
+ *     \@XsdInfo(name = "")
  *     protected String id;
- * </code>
+ * \}
+ * }</pre>
  *
  *
- * @link https://blog.jooq.org/tag/xjc-plugin/
- * @link http://www.archive.ricston.com/blog/xjc-plugin/
- * @link https://stackoverflow.com/questions/43233629/xjc-java-classes-generation-where-fields-have-the-same-name-as-xmlelement/43381317#43381317
+ * @see <a href="https://blog.jooq.org/tag/xjc-plugin/">https://blog.jooq.org/tag/xjc-plugin/</a>
+ * @see <a href="http://www.archive.ricston.com/blog/xjc-plugin/">http://www.archive.ricston.com/blog/xjc-plugin/</a>
+ * @see <a href="https://stackoverflow.com/questions/43233629/xjc-java-classes-generation-where-fields-have-the-same-name-as-xmlelement/43381317#43381317">SOq xjc java classes generation, where fields have the same name as @XmlElement</a>
  *
- * @link https://www.javacodegeeks.com/2011/12/reusing-generated-jaxb-classes.html
+ * @see <a href="https://www.javacodegeeks.com/2011/12/reusing-generated-jaxb-classes.html">Reusing generated jaxb classes</a>
  *
  * @author Pavel Alexeev.
  * @since 2019-01-17 03:34.

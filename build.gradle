@@ -52,6 +52,10 @@ signing {
 	sign configurations.archives
 }
 
+ext{// To do not fail on CI when them does not defined
+	ossrhUser = (project.hasProperty('ossrhUsername') ? project.property('ossrhUsername') : '')
+	ossrhPass = (project.hasProperty('ossrhPassword') ? project.property('ossrhPassword') : '')
+}
 
 uploadArchives {
 	repositories {
@@ -59,11 +63,11 @@ uploadArchives {
 			beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
 			repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-				authentication(userName: ossrhUsername, password: ossrhPassword)
+				authentication(userName: ossrhUser, password: ossrhPass)
 			}
 
 			snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-				authentication(userName: ossrhUsername, password: ossrhPassword)
+				authentication(userName: ossrhUser, password: ossrhPass)
 			}
 
 			pom.project {

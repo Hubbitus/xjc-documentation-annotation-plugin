@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:complexType name="CadastralBlock">
+		<xs:annotation>
+			<xs:documentation>Кадастровый квартал</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="number" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Кадастровый номер</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element minOccurs="0" name="Orient" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Ориентиры</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="_id" type="xs:token" use="required"/>
+	</xs:complexType>
+</xs:schema>

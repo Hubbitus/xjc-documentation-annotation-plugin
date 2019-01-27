@@ -1,0 +1,28 @@
+plugins {
+    id 'java'
+    id 'groovy' // Testing
+}
+
+group 'info.hubbitus'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "com.sun.xml.bind:jaxb-core:2.3.0.1"
+    compile "javax.xml.bind:jaxb-api:${versionJaxbIpi}"
+    testCompile "javax.xml.bind:jaxb-api:${versionJaxbIpi}"
+    compile "com.sun.xml.bind:jaxb-xjc:${versionJaxb}"
+    compile "com.sun.xml.bind:jaxb-impl:${versionJaxb}"
+
+    // Logging
+    compile "org.slf4j:slf4j-api:${versionSlf4j}"
+    compile "ch.qos.logback:logback-classic:${versionLogback}"
+
+    testCompile "org.codehaus.groovy:groovy:${versionGroovy}"
+    testCompile "org.spockframework:spock-core:${versionSpock}"
+}

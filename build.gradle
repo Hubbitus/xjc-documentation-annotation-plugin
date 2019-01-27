@@ -48,7 +48,7 @@ artifacts {
 	archives javadocJar, sourcesJar
 }
 signing {
-//    required { gradle.taskGraph.hasTask("uploadArchives") } // https://groups.google.com/forum/#!topic/gaelyk/WfdEDBOzIOM
+	required { gradle.taskGraph.hasTask("uploadArchives") } // https://groups.google.com/forum/#!topic/gaelyk/WfdEDBOzIOM
 	sign configurations.archives
 }
 

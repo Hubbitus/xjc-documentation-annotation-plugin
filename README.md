@@ -96,7 +96,7 @@ Just run:
 
 ```./gradlew xjcGenerate`
 
-Please look complete example in [example-project-gradle]() directory - it have fully independent gradle project ot demonstrate how to use this plugin..
+Please look complete example in [example-project-gradle](example-project-gradle) directory - it have fully independent gradle project ot demonstrate how to use this plugin..
 
 ## Development:
 

@@ -68,17 +68,7 @@ If you want run it manually ensure jar class with plugin in run classpath and ju
 
 See test [XJCPluginDescriptionAnnotationTest](src/test/groovy/info/hubbitus/XJCPluginDescriptionAnnotationTest.groovy) for example.
 
-## Development:
-
-Build:
-
-    ./gradlew jar
-
-Run tests:
-
-    ./gradlew test
-
-# Gradle
+### Use from Gradle
 
 With [gradle-xjc-plugin](https://github.com/unbroken-dome/gradle-xjc-plugin):
 
@@ -108,7 +98,17 @@ Just run:
 
 Please look complete example in [example-project-gradle]() directory - it have fully independent gradle project ot demonstrate how to use this plugin..
 
-## Rationale
+## Development:
+
+Build:
+
+    ./gradlew jar
+
+Run tests:
+
+    ./gradlew test
+
+## Rationale (why it is born)
 For our integration we have task load big amount of XSD files into MDM software (proprietary [Unidata](https://unidata-platform.com/)).
 
 `XJC` is good tool for generate Java `DTO` classes from `XSD` specification. It was first part ow way.

@@ -80,7 +80,33 @@ Run tests:
 
 # Gradle
 
-TODO: Request to inclusion into Maven Central: https://issues.sonatype.org/browse/OSSRH-45892
+With [gradle-xjc-plugin](https://github.com/unbroken-dome/gradle-xjc-plugin):
+
+```gradle
+plugins {
+	id 'java'
+	id 'org.unbroken-dome.xjc' version '1.4.1' // https://github.com/unbroken-dome/gradle-xjc-plugin
+}
+
+...
+
+dependencies {
+	xjcClasspath 'info.hubbitus:xjc-documentation-annotation-plugin:1.0'
+}
+
+// Results by default in `build/xjc/generated-sources`
+xjcGenerate {
+	source = fileTree('src/main/resources') { include '*.xsd' }
+	packageLevelAnnotations = false
+	targetPackage = 'info.hubbitus.xjc.plugin.example'
+	extraArgs = [ '-XPluginDescriptionAnnotation' ]
+}
+```
+Just run:
+
+```./gradlew xjcGenerate`
+
+Please look complete example in [example-project-gradle]() directory - it have fully independent gradle project ot demonstrate how to use this plugin..
 
 ## Rationale
 For our integration we have task load big amount of XSD files into MDM software (proprietary [Unidata](https://unidata-platform.com/)).

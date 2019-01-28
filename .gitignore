@@ -52,6 +52,12 @@ gradle-app.setting
 .idea/**/markdown-navigator
 .idea/**/markdown-navigator.xml
 
+/example-project-gradle/.idea/**/workspace.xml
+/example-project-gradle/.idea/dbnavigator.xml
+/example-project-gradle/.idea/markdown-navigator.xml
+/example-project-gradle/.idea/markdown-navigator/
+/example-project-gradle/src/
+
 # Sensitive or high-churn files
 .idea/**/dataSources/
 .idea/**/dataSources.ids

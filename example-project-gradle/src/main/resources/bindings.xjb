@@ -1,0 +1,17 @@
+<jxb:bindings version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+			  xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+			  jxb:extensionBindingPrefixes="xjc"
+			  xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc">
+
+	<jxb:globalBindings>
+		<!-- use plural method names for repeatable elements -->
+		<xjc:simple />
+	</jxb:globalBindings>
+
+	<jxb:bindings schemaLocation="maven-4.0.0.xsd">
+		<!-- rename all the node of type "any" to "elements" to improve readability -->
+		<jxb:bindings multiple="true" node="//xs:any" >
+			<jxb:property name="elements"/>
+		</jxb:bindings>
+	</jxb:bindings>
+</jxb:bindings>

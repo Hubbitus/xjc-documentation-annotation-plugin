@@ -1,6 +1,8 @@
 plugins {
 	id 'java'
 	id 'org.unbroken-dome.xjc' version '1.4.1' // https://github.com/unbroken-dome/gradle-xjc-plugin
+	id 'idea'
+	id 'groovy' // For Spock tests
 }
 
 group 'info.hubbitus'
@@ -14,14 +16,36 @@ repositories {
 
 dependencies {
 	xjcClasspath 'info.hubbitus:xjc-documentation-annotation-plugin:1.0'
+
+	// Compile dependency for annotations used
+	compile 'info.hubbitus:xjc-documentation-annotation-plugin:1.0'
+
+	// Tests
+	testCompile 'org.codehaus.groovy:groovy:2.5.5'
+	testCompile 'org.spockframework:spock-core:1.2-groovy-2.5'
 }
 
 // Results by default in `build/xjc/generated-sources`
 xjcGenerate {
+	/**
+	 * There:
+	 * 1. CadastralBlock.xsd is minimal example of functional.
+	 * 2. maven-4.0.0.xsd - example by SOq https://stackoverflow.com/questions/42223784/how-can-i-generate-a-class-from-which-i-can-retrieve-the-xml-of-a-node-as-a-stri
+	 */
 	source = fileTree('src/main/resources') { include '*.xsd' }
+	bindingFiles = fileTree('src/main/jaxb') { include '*.xjb' }
+	outputDirectory = file('src/main/generated-java')
 	packageLevelAnnotations = false
 	targetPackage = 'info.hubbitus.xjc.plugin.example'
 	extraArgs = [ '-XPluginDescriptionAnnotation' ]
 }
 
-
+// Add generated files into compilation:
+// https://stackoverflow.com/questions/36749015/how-do-i-get-intellij-to-recognize-gradle-generated-sources-dir/44740130#44740130
+sourceSets.main.java.srcDir new File(buildDir, xjcGenerate.outputDirectory.absolutePath)
+idea {
+	module {
+		// Marks the already(!) added srcDir as "generated"
+		generatedSourceDirs += xjcGenerate.outputDirectory
+	}
+}

@@ -26,6 +26,7 @@ hs_err_pid*
 ### Gradle template
 .gradle
 /build/
+/example-project-gradle/build
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -48,8 +49,8 @@ gradle-app.setting
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
-.idea/markdown-navigator
-.idea/markdown-navigator.xml
+.idea/**/markdown-navigator
+.idea/**/markdown-navigator.xml
 
 # Sensitive or high-churn files
 .idea/**/dataSources/
@@ -101,4 +102,3 @@ fabric.properties
 
 # Editor-based Rest Client
 .idea/httpRequests
-

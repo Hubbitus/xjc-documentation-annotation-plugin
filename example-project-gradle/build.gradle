@@ -1,0 +1,27 @@
+plugins {
+	id 'java'
+	id 'org.unbroken-dome.xjc' version '1.4.1' // https://github.com/unbroken-dome/gradle-xjc-plugin
+}
+
+group 'info.hubbitus'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	xjcClasspath 'info.hubbitus:xjc-documentation-annotation-plugin:1.0'
+}
+
+// Results by default in `build/xjc/generated-sources`
+xjcGenerate {
+	source = fileTree('src/main/resources') { include '*.xsd' }
+	packageLevelAnnotations = false
+	targetPackage = 'info.hubbitus.xjc.plugin.example'
+	extraArgs = [ '-XPluginDescriptionAnnotation' ]
+}
+
+

@@ -68,9 +68,10 @@ import org.xml.sax.ErrorHandler;
  * }</pre>
  *
  *
- * @see <a href="https://blog.jooq.org/tag/xjc-plugin/">https://blog.jooq.org/tag/xjc-plugin/</a>
- * @see <a href="http://www.archive.ricston.com/blog/xjc-plugin/">http://www.archive.ricston.com/blog/xjc-plugin/</a>
+ * @see <a href="How to Implement Your Own XJC Plugin to Generate toString(), equals(), and hashCode() Methods">https://blog.jooq.org/tag/xjc-plugin/</a>
+ * @see <a href="Creating an XJC plugin">http://www.archive.ricston.com/blog/xjc-plugin/</a>
  * @see <a href="https://stackoverflow.com/questions/43233629/xjc-java-classes-generation-where-fields-have-the-same-name-as-xmlelement/43381317#43381317">SOq xjc java classes generation, where fields have the same name as @XmlElement</a>
+ * @see <a href="https://stackoverflow.com/questions/21606248/jaxb-convert-non-ascii-characters-to-ascii-characters/21780020#21780020">JAXB convert non-ASCII characters to ASCII characters</a>
  *
  * @see <a href="https://www.javacodegeeks.com/2011/12/reusing-generated-jaxb-classes.html">Reusing generated jaxb classes</a>
  *

@@ -25,7 +25,7 @@ dependencies {
 	testCompile 'org.spockframework:spock-core:1.2-groovy-2.5'
 }
 
-// Results by default in `build/xjc/generated-sources`
+// Results will be in directory `src/main/generated-java`
 xjcGenerate {
 	/**
 	 * There:

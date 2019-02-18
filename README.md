@@ -10,18 +10,18 @@ Why that plugin born you may find at the end of readme, but now lets look what i
 Said we have this object described in XSD:
 
 ```xml
-	<xs:complexType name="Customer">
-		<xs:annotation>
-			<xs:documentation>Пользователь</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element name="name" type="xs:string">
-				<xs:annotation>
-					<xs:documentation>Фамилия и имя</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-		</xs:sequence>
-	</xs:complexType>
+  <xs:complexType name="Customer">
+    <xs:annotation>
+      <xs:documentation>Пользователь</xs:documentation>
+      </xs:annotation>
+    <xs:sequence>
+      <xs:element name="name" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Фамилия и имя</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
 ```
 
 We run xjc like:
@@ -32,9 +32,8 @@ And got class like (getters, setters and any annotations omitted for simplicity)
 
 ```java
 public class Customer {
-
-    @XmlElement(required = true)
-    protected String name;
+  @XmlElement(required = true)
+  protected String name;
 }
 ```
 
@@ -61,15 +60,17 @@ If you want run it manually ensure jar class with plugin in run classpath and ju
     xjc -npa -no-header -d src/main/generated-java/ -p xsd.generated -XPluginDescriptionAnnotation scheme.xsd
 
 ### Call from Java/Groovy
-	Driver.run(
-		[
-			'-XPluginDescriptionAnnotation'
-			,'-d', generatedClassesDir.absolutePath
-			,'-p', 'info.hubbitus.generated.test'
-			,'Example.xsd'
-		] as String[]
-		,new XJCListener() {...}
-	)
+```groovy
+  Driver.run(
+    [
+       '-XPluginDescriptionAnnotation'
+        ,'-d', generatedClassesDir.absolutePath
+        ,'-p', 'info.hubbitus.generated.test'
+        ,'Example.xsd'
+    ] as String[]
+    ,new XJCListener() {...}
+  )
+```
 
 See test [XJCPluginDescriptionAnnotationTest](src/test/groovy/info/hubbitus/XJCPluginDescriptionAnnotationTest.groovy) for example.
 
@@ -79,27 +80,27 @@ With [gradle-xjc-plugin](https://github.com/unbroken-dome/gradle-xjc-plugin):
 
 ```gradle
 plugins {
-	id 'java'
-	id 'org.unbroken-dome.xjc' version '1.4.1' // https://github.com/unbroken-dome/gradle-xjc-plugin
+  id 'java'
+  id 'org.unbroken-dome.xjc' version '1.4.1' // https://github.com/unbroken-dome/gradle-xjc-plugin
 }
 
 ...
 
 dependencies {
-	xjcClasspath 'info.hubbitus:xjc-documentation-annotation-plugin:1.0'
+  xjcClasspath 'info.hubbitus:xjc-documentation-annotation-plugin:1.0'
 }
 
 // Results by default in `build/xjc/generated-sources`
 xjcGenerate {
-	source = fileTree('src/main/resources') { include '*.xsd' }
-	packageLevelAnnotations = false
-	targetPackage = 'info.hubbitus.xjc.plugin.example'
-	extraArgs = [ '-XPluginDescriptionAnnotation' ]
+  source = fileTree('src/main/resources') { include '*.xsd' }
+  packageLevelAnnotations = false
+  targetPackage = 'info.hubbitus.xjc.plugin.example'
+  extraArgs = [ '-XPluginDescriptionAnnotation' ]
 }
 ```
 Just run:
 
-```./gradlew xjcGenerate`
+    ./gradlew xjcGenerate
 
 Please look complete example in [example-project-gradle](example-project-gradle) directory - it have fully independent gradle project ot demonstrate how to use this plugin..
 

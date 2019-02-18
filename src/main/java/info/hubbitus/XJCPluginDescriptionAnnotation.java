@@ -33,37 +33,36 @@ import org.xml.sax.ErrorHandler;
  * F.e. for XSD declaration:
  *
  * <pre>{@code
- * 	<xs:complexType name="CadastralBlock">
+ * 	<xs:complexType name="Customer">
  * 		<xs:annotation>
- * 			<xs:documentation>Кадастровый квартал</xs:documentation>
+ * 			<xs:documentation>Пользователь</xs:documentation>
  * 		</xs:annotation>
  * 		<xs:sequence>
- * 			<xs:element name="number" type="tns:TCadastralNumberBlock">
+ * 			<xs:element name="name" type="xs:string">
  * 				<xs:annotation>
- * 					<xs:documentation>Кадастровый номер</xs:documentation>
+ * 					<xs:documentation>Фамилия и имя</xs:documentation>
  * 				</xs:annotation>
  * 			</xs:element>
- * 			<xs:element minOccurs="0" name="Orient" type="xs:string">
+ * 			<xs:element name="age" type="xs:positiveInteger">
  * 				<xs:annotation>
- * 					<xs:documentation>Ориентиры</xs:documentation>
+ * 					<xs:documentation>Возраст</xs:documentation>
  * 				</xs:annotation>
  * 			</xs:element>
  * 		</xs:sequence>
- * 		<xs:attribute name="_id" type="xs:token" use="required"/>
  * 	</xs:complexType>
  * }</pre>
- * 	Will be generated (stripped, base annotations mad methods omitted):
+ * 	Will be generated (stripped, base annotations and methods omitted):
  * <pre>{@code
- *     \@XsdInfo(name = "Кадастровый квартал", xsdElementPart = "<complexType name=\"CadastralBlock\">\n  <complexContent>\n    <restriction base=\"{http://www.w3.org/2001/XMLSchema}anyType\">\n      <sequence>\n        <element name=\"number\" type=\"{http://rosreestr.ru/services/v0.1/commons/TObject}TCadastralNumberBlock\"/>\n        <element name=\"Orient\" type=\"{http://www.w3.org/2001/XMLSchema}string\" minOccurs=\"0\"/>\n      </sequence>\n      <attribute name=\"_id\" use=\"required\" type=\"{http://www.w3.org/2001/XMLSchema}token\" />\n    </restriction>\n  </complexContent>\n</complexType>\n")
- * public class CadastralBlock {
- *     \@XsdInfo(name = "Кадастровый номер")
- *     protected TCadastralNumberBlock number;
- *     \@XsdInfo(name = "Ориентиры")
- *     protected String orient;
- *     \@XmlAttribute(name = "_id", required = true)
- *     \@XmlSchemaType(name = "token")
- *     \@XsdInfo(name = "")
- *     protected String id;
+ * \@XsdInfo(name = "Пользователь", xsdElementPart = "<complexType name=\"Customer\">\n  <complexContent>\n    <restriction base=\"{http://www.w3.org/2001/XMLSchema}anyType\">\n      <sequence>\n        <element name=\"name\" type=\"{http://www.w3.org/2001/XMLSchema}string\"/>\n        <element name=\"age\" type=\"{http://www.w3.org/2001/XMLSchema}positiveInteger\"/>\n      </sequence>\n    </restriction>\n  </complexContent>\n</complexType>")
+ * public class Customer {
+ *
+ *     \@XmlElement(required = true)
+ *     \@XsdInfo(name = "Фамилия и имя")
+ *     protected String name;
+ *     \@XmlElement(required = true)
+ *     \@XmlSchemaType(name = "positiveInteger")
+ *     \@XsdInfo(name = "Возраст")
+ *     protected BigInteger age;
  * \}
  * }</pre>
  *

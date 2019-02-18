@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-	xjcClasspath 'info.hubbitus:xjc-documentation-annotation-plugin:1.0'
+	xjcClasspath 'info.hubbitus:xjc-documentation-annotation-plugin:1.0.1'
 
 	// Compile dependency for annotations used
 	compile 'info.hubbitus:xjc-documentation-annotation-plugin:1.0'
@@ -29,7 +29,7 @@ dependencies {
 xjcGenerate {
 	/**
 	 * There:
-	 * 1. CadastralBlock.xsd is minimal example of functional.
+	 * 1. Example.xsd is minimal example of functional.
 	 * 2. maven-4.0.0.xsd - example by SOq https://stackoverflow.com/questions/42223784/how-can-i-generate-a-class-from-which-i-can-retrieve-the-xml-of-a-node-as-a-stri
 	 */
 	source = fileTree('src/main/resources') { include '*.xsd' }

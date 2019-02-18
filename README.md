@@ -10,17 +10,18 @@ Why that plugin born you may find at the end of readme, but now lets look what i
 Said we have this object described in XSD:
 
 ```xml
-<xs:complexType name="CadastralBlock">
-	<xs:annotation>
-		<xs:documentation>Cadastral quarter</xs:documentation>
-	</xs:annotation>
-	<xs:sequence>
-		<xs:element name="number" type="xs:string">
-			<xs:annotation>
-				<xs:documentation>Cadastral number</xs:documentation>
-			</xs:annotation>
-		</xs:element>
-</xs:complexType>
+	<xs:complexType name="Customer">
+		<xs:annotation>
+			<xs:documentation>Пользователь</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="name" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Фамилия и имя</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
 ```
 
 We run xjc like:
@@ -30,8 +31,10 @@ We run xjc like:
 And got class like (getters, setters and any annotations omitted for simplicity):
 
 ```java
-public class CadastralBlock {
-    protected String number;
+public class Customer {
+
+    @XmlElement(required = true)
+    protected String name;
 }
 ```
 
@@ -41,10 +44,12 @@ So it what this plugin do!
 So you get:
 
 ```java
-@XsdInfo(name = "Cadastral quarter", xsdElementPart = "<complexType name=\"CadastralBlock\">\n  <complexContent>\n    <restriction base=\"{http://www.w3.org/2001/XMLSchema}anyType\">\n      <sequence>\n        <element name=\"number\" type=\"{http://www.w3.org/2001/XMLSchema}string\"/></sequence>\n      </restriction>\n  </complexContent></complexType>")
-public class CadastralBlock {
-    @XsdInfo(name = "Cadastral number")
-    protected String number;
+@XsdInfo(name = "Пользователь", xsdElementPart = "<complexType name=\"Customer\">\n  <complexContent>\n    <restriction base=\"{http://www.w3.org/2001/XMLSchema}anyType\">\n      <sequence>\n        <element name=\"name\" type=\"{http://www.w3.org/2001/XMLSchema}string\"/>\n      </sequence>\n    </restriction>\n  </complexContent>\n</complexType>")
+public class Customer {
+
+    @XmlElement(required = true)
+    @XsdInfo(name = "Фамилия и имя")
+    protected String name;
 }
 ```
 
@@ -61,7 +66,7 @@ If you want run it manually ensure jar class with plugin in run classpath and ju
 			'-XPluginDescriptionAnnotation'
 			,'-d', generatedClassesDir.absolutePath
 			,'-p', 'info.hubbitus.generated.test'
-			,'CadastralBlock.xsd'
+			,'Example.xsd'
 		] as String[]
 		,new XJCListener() {...}
 	)

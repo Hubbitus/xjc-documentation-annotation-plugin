@@ -34,7 +34,7 @@ class XJCPluginDescriptionAnnotationTest extends Specification {
 			outStream.toString().contains("-XPluginDescriptionAnnotation    :  xjc plugin for bring XSD descriptions as annotations")
 	}
 
-	def "simple generate"(){
+	def "generate class, compile, load and check annotations"(){
 		setup:
 			File generatedClassesDir = new File(this.getClass().getResource('/').getPath() + 'generated-classes')
 			generatedClassesDir.mkdir()
@@ -46,7 +46,7 @@ class XJCPluginDescriptionAnnotationTest extends Specification {
 					,'-XPluginDescriptionAnnotation'
 					,'-d', generatedClassesDir.absolutePath
 					,'-p', 'info.hubbitus.generated.test'
-					,this.getClass().getResource('/CadastralBlock.xsd')
+					,this.getClass().getResource('/Example.xsd')
 				] as String[]
 				,new XJCListener() {
 					@Override
@@ -79,36 +79,34 @@ class XJCPluginDescriptionAnnotationTest extends Specification {
 
 		when: // Compile generated class (by https://stackoverflow.com/questions/30912479/create-java-file-and-compile-it-to-a-class-file-at-runtime/33045582#33045582)
 			JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-			int compileRes = compiler.run(null, null, null, new File(generatedClassesDir, '/info/hubbitus/generated/test/CadastralBlock.java').absolutePath);
+			int compileRes = compiler.run(null, null, null, new File(generatedClassesDir, '/info/hubbitus/generated/test/Customer.java').absolutePath);
 		then:
 			compileRes == 0
-			new File(generatedClassesDir, '/info/hubbitus/generated/test/CadastralBlock.class').exists()
+			new File(generatedClassesDir, '/info/hubbitus/generated/test/Customer.class').exists()
 
 		when: // Try load compiled class and instantiate object
 			ClassLoader cl = new URLClassLoader([generatedClassesDir.toURI().toURL()] as URL[])
-			Class cls = cl.loadClass('info.hubbitus.generated.test.CadastralBlock')
+			Class cls = cl.loadClass('info.hubbitus.generated.test.Customer')
 			Object obj = cls.getDeclaredConstructor().newInstance()
 		then:
 			cls
 			obj
 
 			XsdInfo classAnnotation = cls.getDeclaredAnnotation(XsdInfo)
-			classAnnotation.name() == "Кадастровый квартал"
-			classAnnotation.xsdElementPart() == "<complexType name=\"CadastralBlock\">\n" +
-				"  <complexContent>\n" +
-				"    <restriction base=\"{http://www.w3.org/2001/XMLSchema}anyType\">\n" +
-				"      <sequence>\n" +
-				"        <element name=\"number\" type=\"{http://www.w3.org/2001/XMLSchema}string\"/>\n" +
-				"        <element name=\"Orient\" type=\"{http://www.w3.org/2001/XMLSchema}string\" minOccurs=\"0\"/>\n" +
-				"      </sequence>\n" +
-				"      <attribute name=\"_id\" use=\"required\" type=\"{http://www.w3.org/2001/XMLSchema}token\" />\n" +
-				"    </restriction>\n" +
-				"  </complexContent>\n" +
-				"</complexType>"
+			classAnnotation.name() == 'Пользователь'
+			classAnnotation.xsdElementPart() == '''<complexType name="Customer">
+  <complexContent>
+    <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+      <sequence>
+        <element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
+        <element name="age" type="{http://www.w3.org/2001/XMLSchema}positiveInteger"/>
+      </sequence>
+    </restriction>
+  </complexContent>
+</complexType>'''
 
-			cls.getDeclaredFields().size() == 3
-			cls.getDeclaredFields().find{ 'number' == it.name }.getAnnotation(XsdInfo).name() == 'Кадастровый номер'
-			cls.getDeclaredFields().find{ 'orient' == it.name }.getAnnotation(XsdInfo).name() == 'Ориентиры'
-			cls.getDeclaredFields().find{ 'id'     == it.name }.getAnnotation(XsdInfo).name() == ''
+			cls.getDeclaredFields().size() == 2
+			cls.getDeclaredFields().find{ 'name' == it.name }.getAnnotation(XsdInfo).name() == 'Фамилия и имя'
+			cls.getDeclaredFields().find{ 'age' == it.name }.getAnnotation(XsdInfo).name() == 'Возраст'
 	}
 }

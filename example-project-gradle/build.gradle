@@ -14,11 +14,16 @@ repositories {
 	mavenCentral()
 }
 
+ext{
+	pluginVersion = '1.0.1'
+}
+
 dependencies {
-	xjcClasspath 'info.hubbitus:xjc-documentation-annotation-plugin:1.0.1'
+	xjcClasspath "info.hubbitus:xjc-documentation-annotation-plugin:$pluginVersion"
 
 	// Compile dependency for annotations used
-	compile 'info.hubbitus:xjc-documentation-annotation-plugin:1.0'
+	compile "info.hubbitus:xjc-documentation-annotation-plugin:$pluginVersion"
+	testCompile "info.hubbitus:xjc-documentation-annotation-plugin:$pluginVersion"
 
 	// Tests
 	testCompile 'org.codehaus.groovy:groovy:2.5.5'
@@ -49,3 +54,5 @@ idea {
 		generatedSourceDirs += xjcGenerate.outputDirectory
 	}
 }
+
+compileTestGroovy.dependsOn xjcGenerate

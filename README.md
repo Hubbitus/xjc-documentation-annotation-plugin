@@ -3,6 +3,9 @@
 XJC plugin to bring XSD descriptions into annotations of generated classes
 ==========================================================================
 
+[Habr article](https://habr.com/en/post/437914/) (in Russian) describing for what it and how to use.
+
+
 Why that plugin born you may find at the end of readme, but now lets look what it does and how to use it!
 
 ## What it does: \<annotation>\<documentation> -> Java class annotations

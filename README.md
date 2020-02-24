@@ -118,18 +118,19 @@ Run tests:
     ./gradlew test
 
 ## Rationale (why it is born)
-For our integration we have task load big amount of XSD files into MDM software (proprietary [Unidata](https://unidata-platform.com/)).
+For our integration we have task load big amount of `XSD` files into `MDM` software (proprietary [Unidata](https://unidata-platform.com/)).
 
 `XJC` is good tool for generate Java `DTO` classes from `XSD` specification. It was first part ow way.
 Then I got excellent [reflections](https://github.com/ronmamo/reflections) library and travers generated classes.
 
-Problem was I was not be able name my model items with original annotations! Despite XJC place initial Javadoc which contains description and related part of XML element it have several problems:
+Problem was I was not be able name my model items with original annotations! Despite `XJC` place initial Javadoc which contains description and related part of `XML` element it have several problems:
+
 1. That only for class, and absent fo fields.
 2. Even for class I can't use javadoc in runtime
 
-First approach to parse XSD for documentation on groovy works, but was very fragile and always require get updates and hacks.
+First approach to parse `XSD` for documentation on groovy works, but was very fragile and always require get updates and hacks.
 
-I long time search way to bring such annotations into DTO classes itself to do not do work twice (generate classes and again parse XSD files manually).
+I long time search way to bring such annotations into `DTO` classes itself to do not do work twice (generate classes and again parse `XSD` files manually).
 I did not found solution. And it is the reason born of that plugin.
 
 ## Licensed under MIT

@@ -100,12 +100,13 @@ class XJCPluginDescriptionAnnotationTest extends Specification {
       <sequence>
         <element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
         <element name="age" type="{http://www.w3.org/2001/XMLSchema}positiveInteger"/>
+        <element name="address" type="{http://www.w3.org/2001/XMLSchema}string"/>
       </sequence>
     </restriction>
   </complexContent>
 </complexType>'''
 
-			cls.getDeclaredFields().size() == 2
+			cls.getDeclaredFields().size() == 3
 			cls.getDeclaredFields().find{ 'name' == it.name }.getAnnotation(XsdInfo).name() == 'Фамилия и имя'
 			cls.getDeclaredFields().find{ 'age' == it.name }.getAnnotation(XsdInfo).name() == 'Возраст'
 	}

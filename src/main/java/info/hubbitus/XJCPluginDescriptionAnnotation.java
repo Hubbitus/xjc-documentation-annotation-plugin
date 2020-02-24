@@ -85,7 +85,7 @@ public class XJCPluginDescriptionAnnotation extends Plugin {
 
 	@Override
 	public int parseArgument(Options opt, String[] args, int i) {
-		return 1;
+		return 0;
 	}
 
 	@Override

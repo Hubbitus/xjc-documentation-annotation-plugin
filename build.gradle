@@ -7,16 +7,22 @@ plugins {
 	id 'signing'
 }
 
-group 'info.hubbitus'
-version '1.1'
+group = 'info.hubbitus'
+version = '1.1'
 
-java {
-	sourceCompatibility = JavaVersion.VERSION_1_8
-	targetCompatibility = JavaVersion.VERSION_1_8
-}
-
+// Gradle itself requires JDK 17+, but the built plugin must work on Java 11+
 tasks.withType(JavaCompile).configureEach {
 	options.encoding = 'UTF-8'
+	options.release = 11
+}
+
+// Run tests on a specific JVM (to check that built plugin works on it): ./gradlew test -PtestJavaVersion=11
+if (project.hasProperty('testJavaVersion')) {
+	tasks.withType(Test).configureEach {
+		javaLauncher = javaToolchains.launcherFor {
+			languageVersion = JavaLanguageVersion.of(project.property('testJavaVersion') as int)
+		}
+	}
 }
 
 tasks.withType(Javadoc).configureEach {
@@ -103,7 +109,7 @@ publishing {
 }
 
 signing {
-	required { gradle.taskGraph.hasTask('publish') } // Do not require signing on CI/local builds
+	required = { gradle.taskGraph.hasTask('publish') } // Do not require signing on CI/local builds
 	sign publishing.publications.mavenJava
 }
 

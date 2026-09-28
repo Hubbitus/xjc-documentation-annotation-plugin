@@ -11,19 +11,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [ 11, 17, 21 ]
+        # JVM the built plugin is tested on (Gradle itself needs JDK 17+)
+        test-java: [ 11, 17, 21 ]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: ${{ matrix.java }}
+          # The last one (21) becomes default JAVA_HOME and runs Gradle, the other is found by toolchains
+          java-version: |
+            ${{ matrix.test-java }}
+            21
       - uses: gradle/actions/setup-gradle@v4
-      - name: Build and test
-        run: ./gradlew check --rerun-tasks
+      - name: Build and test on Java ${{ matrix.test-java }}
+        run: ./gradlew check --rerun-tasks -PtestJavaVersion=${{ matrix.test-java }}
       - name: Upload test report
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: test-report-java-${{ matrix.java }}
+          name: test-report-java-${{ matrix.test-java }}
           path: build/reports/tests/

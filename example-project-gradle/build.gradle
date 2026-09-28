@@ -1,16 +1,15 @@
 plugins {
 	id 'java'
-	id 'org.unbroken-dome.xjc' version '2.0.0' // https://github.com/unbroken-dome/gradle-xjc-plugin
+	id 'com.github.bjornvester.xjc' version '1.9.1' // https://github.com/bjornvester/xjc-gradle-plugin
 	id 'idea'
 	id 'groovy' // For Spock tests
 }
 
-group 'info.hubbitus'
-version '1.0-SNAPSHOT'
+group = 'info.hubbitus'
+version = '1.0-SNAPSHOT'
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_1_8
-	targetCompatibility = JavaVersion.VERSION_1_8
+	toolchain { languageVersion = JavaLanguageVersion.of(11) }
 }
 
 repositories {
@@ -22,7 +21,7 @@ ext{
 }
 
 dependencies {
-	xjcClasspath "info.hubbitus:xjc-documentation-annotation-plugin:$pluginVersion"
+	xjcPlugins "info.hubbitus:xjc-documentation-annotation-plugin:$pluginVersion"
 
 	// Compile dependency for annotations used
 	implementation "info.hubbitus:xjc-documentation-annotation-plugin:$pluginVersion"
@@ -33,27 +32,16 @@ dependencies {
 	testImplementation 'org.spockframework:spock-core:1.3-groovy-2.5'
 }
 
-// Results will be in directory `src/main/generated-java`
-xjcGenerate {
+// Results will be in directory `build/generated/sources/xjc/java`
+xjc {
 	/**
 	 * There:
 	 * 1. Example.xsd is minimal example of functional.
 	 * 2. maven-4.0.0.xsd - example by SOq https://stackoverflow.com/questions/42223784/how-can-i-generate-a-class-from-which-i-can-retrieve-the-xml-of-a-node-as-a-stri
 	 */
-	source = fileTree('src/main/resources') { include '*.xsd' }
+	xsdDir = layout.projectDirectory.dir('src/main/resources')
 	bindingFiles = fileTree('src/main/resources') { include '*.xjb' }
-	outputDirectory.set(layout.projectDirectory.dir('src/main/generated-java'))
-	packageLevelAnnotations.set(false)
-	targetPackage.set('info.hubbitus.xjc.plugin.example')
-	extraArgs.set([ '-XPluginDescriptionAnnotation' ])
+	useJakarta = false // The plugin is built on javax (JAXB 2.x) XJC API
+	defaultPackage = 'info.hubbitus.xjc.plugin.example'
+	options = [ '-XPluginDescriptionAnnotation' ]
 }
-
-// The xjc plugin adds generated sources into compilation of main source set automatically.
-idea {
-	module {
-		// Marks the generated srcDir as "generated"
-		generatedSourceDirs += file('src/main/generated-java')
-	}
-}
-
-compileTestGroovy.dependsOn xjcGenerate

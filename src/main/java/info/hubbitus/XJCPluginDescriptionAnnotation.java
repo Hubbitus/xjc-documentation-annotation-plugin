@@ -19,6 +19,7 @@ import com.sun.tools.xjc.model.CPropertyInfo;
 import com.sun.tools.xjc.outline.ClassOutline;
 import com.sun.tools.xjc.outline.Outline;
 import com.sun.tools.xjc.reader.xmlschema.bindinfo.BindInfo;
+import com.sun.xml.xsom.XSAnnotation;
 import com.sun.xml.xsom.XSComponent;
 import com.sun.xml.xsom.impl.AttributeUseImpl;
 import com.sun.xml.xsom.impl.ParticleImpl;
@@ -170,33 +171,38 @@ public class XJCPluginDescriptionAnnotation extends Plugin {
 	}
 
 	static private String classInfoGetDescriptionAnnotation(CClassInfo classInfo){
-		String description = "";
-		if (null != (classInfo.getSchemaComponent()).getAnnotation()){
-			description = ((BindInfo)(classInfo.getSchemaComponent()).getAnnotation().getAnnotation()).getDocumentation();
-		}
-		return description.trim();
+		return resolveDescription(classInfo.getSchemaComponent().getAnnotation());
 	}
 
 	static private String fieldGetDescriptionAnnotation(CPropertyInfo propertyInfo){
-		String description = "";
-		assert ( (propertyInfo.getSchemaComponent() instanceof AttributeUseImpl) || (propertyInfo.getSchemaComponent() instanceof ParticleImpl) );
+		XSComponent schemaComponent = propertyInfo.getSchemaComponent();
+		XSAnnotation annotation = null;
 		//<xs:complexType name="TDocumentRefer">
 		//		<xs:attribute name="documentID" use="required">
 		//			<xs:annotation>
 		//				<xs:documentation>Идентификатор документа</xs:documentation>
-		if ( (propertyInfo.getSchemaComponent() instanceof AttributeUseImpl)
-				&& null != ( ((AttributeUseImpl)propertyInfo.getSchemaComponent()).getDecl().getAnnotation() )){
-			description = ((BindInfo)((AttributeUseImpl)propertyInfo.getSchemaComponent()).getDecl().getAnnotation().getAnnotation()).getDocumentation();
+		if (schemaComponent instanceof AttributeUseImpl){
+			annotation = ((AttributeUseImpl)schemaComponent).getDecl().getAnnotation();
 		}
 		// <xs:complexType name="TBasicInterdepStatement">
 		//		<xs:element name="header" type="stCom:TInterdepStatementHeader" minOccurs="0">
 		//				<xs:annotation>
 		//					<xs:documentation>Заголовок заявления</xs:documentation>
-		if ( (propertyInfo.getSchemaComponent() instanceof ParticleImpl)
-				&& null != ( (((ParticleImpl) propertyInfo.getSchemaComponent()).getTerm()).getAnnotation() )){
-			description = ((BindInfo)(((ParticleImpl) propertyInfo.getSchemaComponent()).getTerm()).getAnnotation().getAnnotation()).getDocumentation();
+		else if (schemaComponent instanceof ParticleImpl){
+			annotation = ((ParticleImpl)schemaComponent).getTerm().getAnnotation();
 		}
-		return description.trim();
+		return resolveDescription(annotation);
+	}
+
+	/**
+	 * Annotation (as well as documentation inside it) is optional in XSD, so both may be absent.
+	 */
+	static private String resolveDescription(XSAnnotation annotation){
+		if (null == annotation || null == annotation.getAnnotation()){
+			return "";
+		}
+		String description = ((BindInfo)annotation.getAnnotation()).getDocumentation();
+		return null == description ? "" : description.trim();
 	}
 
 //	@Override

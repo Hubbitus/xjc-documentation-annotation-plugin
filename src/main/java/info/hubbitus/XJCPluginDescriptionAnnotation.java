@@ -79,6 +79,14 @@ import org.xml.sax.ErrorHandler;
  * @since 2019-01-17 03:34.
  */
 public class XJCPluginDescriptionAnnotation extends Plugin {
+	/**
+	 * Public no-arg constructor is required by XJC, which instantiates plugins via {@link java.util.ServiceLoader}
+	 * (see <code>META-INF/services/com.sun.tools.xjc.Plugin</code>).
+	 */
+	public XJCPluginDescriptionAnnotation() {
+		super();
+	}
+
 	@Override
 	public String getOptionName() {
 		return "XPluginDescriptionAnnotation";

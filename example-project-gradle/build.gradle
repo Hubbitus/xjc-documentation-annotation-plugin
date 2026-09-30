@@ -28,8 +28,13 @@ dependencies {
 	testImplementation "info.hubbitus:xjc-documentation-annotation-plugin:$pluginVersion"
 
 	// Tests
-	testImplementation 'org.codehaus.groovy:groovy:2.5.23'
-	testImplementation 'org.spockframework:spock-core:1.3-groovy-2.5'
+	testImplementation 'org.apache.groovy:groovy:5.1.3'
+	testImplementation 'org.spockframework:spock-core:2.4-groovy-5.0'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher' // Required by Gradle 9 (version is managed by Spock BOM)
+}
+
+tasks.withType(Test).configureEach {
+	useJUnitPlatform() // Spock 2
 }
 
 // Results will be in directory `build/generated/sources/xjc/java`

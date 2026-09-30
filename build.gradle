@@ -11,9 +11,19 @@ group = 'info.hubbitus'
 version = '1.1'
 
 // Gradle itself requires JDK 17+, but the built plugin must work on Java 11+
+java {
+	// Also used for Groovy (tests) bytecode level, which otherwise defaults to the JVM running Gradle
+	sourceCompatibility = JavaVersion.VERSION_11
+	targetCompatibility = JavaVersion.VERSION_11
+}
+
 tasks.withType(JavaCompile).configureEach {
 	options.encoding = 'UTF-8'
 	options.release = 11
+}
+
+tasks.withType(Test).configureEach {
+	useJUnitPlatform() // Spock 2
 }
 
 // Run tests on a specific JVM (to check that built plugin works on it): ./gradlew test -PtestJavaVersion=11
@@ -44,8 +54,9 @@ dependencies {
 	implementation "org.slf4j:slf4j-api:${versionSlf4j}"
 	implementation "ch.qos.logback:logback-classic:${versionLogback}"
 
-	testImplementation "org.codehaus.groovy:groovy:${versionGroovy}"
+	testImplementation "org.apache.groovy:groovy:${versionGroovy}"
 	testImplementation "org.spockframework:spock-core:${versionSpock}"
+	testRuntimeOnly "org.junit.platform:junit-platform-launcher" // Required by Gradle 9 for JUnit Platform (version is managed by Spock BOM)
 }
 
 ///////////////////////////////////////////////////////////////

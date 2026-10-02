@@ -1,104 +1,128 @@
 plugins {
-	id 'java'
+	id 'java-library'
 	id 'groovy' // Testing
 	// http://central.sonatype.org/pages/gradle.html
-	id 'maven'
+	id 'maven-publish'
 	id 'idea'
 	id 'signing'
 }
 
-group 'info.hubbitus'
-version '1.1'
+group = 'info.hubbitus'
+version = '1.2-SNAPSHOT' // 1.1 is released and has the NPE bug (#2), the fix is in the next version
 
-sourceCompatibility = 1.8
+// Gradle itself requires JDK 17+, but the built plugin must work on Java 11+
+java {
+	// Also used for Groovy (tests) bytecode level, which otherwise defaults to the JVM running Gradle
+	sourceCompatibility = JavaVersion.VERSION_11
+	targetCompatibility = JavaVersion.VERSION_11
+}
+
+tasks.withType(JavaCompile).configureEach {
+	options.encoding = 'UTF-8'
+	options.release = 11
+}
+
+tasks.withType(Test).configureEach {
+	useJUnitPlatform() // Spock 2
+}
+
+// Run tests on a specific JVM (to check that built plugin works on it): ./gradlew test -PtestJavaVersion=11
+if (project.hasProperty('testJavaVersion')) {
+	tasks.withType(Test).configureEach {
+		javaLauncher = javaToolchains.launcherFor {
+			languageVersion = JavaLanguageVersion.of(project.property('testJavaVersion') as int)
+		}
+	}
+}
+
+tasks.withType(Javadoc).configureEach {
+	options.encoding = 'UTF-8'
+}
 
 repositories {
 	mavenCentral()
 }
 
 dependencies {
-	compile 'com.sun.xml.bind:jaxb-core:2.3.0.1'
-	compile "javax.xml.bind:jaxb-api:${versionJaxbIpi}"
-	testCompile "javax.xml.bind:jaxb-api:${versionJaxbIpi}"
-	compile "com.sun.xml.bind:jaxb-xjc:${versionJaxb}"
-	compile "com.sun.xml.bind:jaxb-impl:${versionJaxb}"
+	api 'com.sun.xml.bind:jaxb-core:2.3.0.1'
+	api "javax.xml.bind:jaxb-api:${versionJaxbIpi}"
+	testImplementation "javax.xml.bind:jaxb-api:${versionJaxbIpi}"
+	implementation "com.sun.xml.bind:jaxb-xjc:${versionJaxb}"
+	implementation "com.sun.xml.bind:jaxb-impl:${versionJaxb}"
 
 	// Logging
-	compile "org.slf4j:slf4j-api:${versionSlf4j}"
-	compile "ch.qos.logback:logback-classic:${versionLogback}"
+	implementation "org.slf4j:slf4j-api:${versionSlf4j}"
+	implementation "ch.qos.logback:logback-classic:${versionLogback}"
 
-	testCompile "org.codehaus.groovy:groovy:${versionGroovy}"
-	testCompile "org.spockframework:spock-core:${versionSpock}"
+	testImplementation "org.apache.groovy:groovy:${versionGroovy}"
+	testImplementation "org.spockframework:spock-core:${versionSpock}"
+	testRuntimeOnly "org.junit.platform:junit-platform-launcher" // Required by Gradle 9 for JUnit Platform (version is managed by Spock BOM)
 }
 
 ///////////////////////////////////////////////////////////////
 // Artifacts publishing into central OSS repository
 // http://central.sonatype.org/pages/gradle.html
-task javadocJar(type: Jar) {
-	archiveClassifier.set('javadoc') // https://discuss.gradle.org/t/publishing-jars-with-classifiers-after-v5-0/30144/2
-	from javadoc
+def ossrhUserName = project.findProperty('ossrhUsername') ?: '' // To do not fail on CI when them does not defined
+def ossrhPassword = project.findProperty('ossrhPassword') ?: ''
+
+java {
+	withJavadocJar()
+	withSourcesJar()
 }
 
-task sourcesJar(type: Jar) {
-	archiveClassifier.set('sources')
-	from sourceSets.main.allSource
-}
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
 
-artifacts {
-	archives javadocJar, sourcesJar
-}
-signing {
-	required { gradle.taskGraph.hasTask("uploadArchives") } // https://groups.google.com/forum/#!topic/gaelyk/WfdEDBOzIOM
-	sign configurations.archives
-}
-
-ext{// To do not fail on CI when them does not defined
-	ossrhUser = (project.hasProperty('ossrhUsername') ? project.property('ossrhUsername') : '')
-	ossrhPass = (project.hasProperty('ossrhPassword') ? project.property('ossrhPassword') : '')
-}
-
-uploadArchives {
-	repositories {
-		mavenDeployer {
-			beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-			repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-				authentication(userName: ossrhUser, password: ossrhPass)
-			}
-
-			snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-				authentication(userName: ossrhUser, password: ossrhPass)
-			}
-
-			pom.project {
-				name project.name
-				packaging 'jar'
-				description 'XJC plugin to bring XSD descriptions into annotations of generated classes'
-				url 'https://github.com/Hubbitus/xjc-documentation-annotation-plugin'
+			pom {
+				name = project.name
+				packaging = 'jar'
+				description = 'XJC plugin to bring XSD descriptions into annotations of generated classes'
+				url = 'https://github.com/Hubbitus/xjc-documentation-annotation-plugin'
 
 				scm {
-					connection 'scm:git:https://github.com/Hubbitus/xjc-documentation-annotation-plugin.git'
-					developerConnection 'scm:git:git@github.com:Hubbitus/xjc-documentation-annotation-plugin.git'
-					url 'https://github.com/Hubbitus/xjc-documentation-annotation-plugin'
+					connection = 'scm:git:https://github.com/Hubbitus/xjc-documentation-annotation-plugin.git'
+					developerConnection = 'scm:git:git@github.com:Hubbitus/xjc-documentation-annotation-plugin.git'
+					url = 'https://github.com/Hubbitus/xjc-documentation-annotation-plugin'
 				}
 
 				licenses {
 					license {
-						name 'MIT'
-						url 'https://opensource.org/licenses/MIT'
+						name = 'MIT'
+						url = 'https://opensource.org/licenses/MIT'
 					}
 				}
 
 				developers {
 					developer {
-						id 'Hubbitus'
-						name 'Pavel Alexeev'
-						email 'Pahan@Hubbitus.info'
+						id = 'Hubbitus'
+						name = 'Pavel Alexeev'
+						email = 'Pahan@Hubbitus.info'
 					}
 				}
 			}
 		}
 	}
+
+	repositories {
+		maven {
+			name = 'ossrh'
+			def releasesRepoUrl = uri('https://oss.sonatype.org/service/local/staging/deploy/maven2/')
+			def snapshotsRepoUrl = uri('https://oss.sonatype.org/content/repositories/snapshots/')
+			url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+			credentials {
+				username = ossrhUserName
+				password = ossrhPassword
+			}
+		}
+	}
 }
+
+signing {
+	required = { gradle.taskGraph.hasTask('publish') } // Do not require signing on CI/local builds
+	sign publishing.publications.mavenJava
+}
+
 // /Artifacts publishing into central OSS repository
 ////////////////////////////////////////////////////

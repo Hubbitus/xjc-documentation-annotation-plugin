@@ -1,4 +1,4 @@
-[![Autobuild Status](https://travis-ci.org/Hubbitus/xjc-documentation-annotation-plugin.svg?branch=master)](https://travis-ci.org/Hubbitus/xjc-documentation-annotation-plugin)
+[![CI](https://github.com/Hubbitus/xjc-documentation-annotation-plugin/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Hubbitus/xjc-documentation-annotation-plugin/actions/workflows/ci.yml)
 
 XJC plugin to bring XSD descriptions into annotations of generated classes
 ==========================================================================

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<!-- Annotation present, but without <xs:documentation> (only appinfo): documentation is null -->
+	<xs:complexType name="NoDoc">
+		<xs:annotation>
+			<xs:appinfo>Some application info</xs:appinfo>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="withoutAnnotation" type="xs:string"/>
+			<xs:element name="onlyAppinfo" type="xs:string">
+				<xs:annotation>
+					<xs:appinfo>Some application info</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="attrOnlyAppinfo" type="xs:string">
+			<xs:annotation>
+				<xs:appinfo>Some application info</xs:appinfo>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="attrWithoutAnnotation" type="xs:string"/>
+	</xs:complexType>
+
+	<!-- No annotation at all -->
+	<xs:complexType name="NoAnnotation">
+		<xs:sequence>
+			<xs:element name="value" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

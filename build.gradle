@@ -8,7 +8,7 @@ plugins {
 }
 
 group = 'info.hubbitus'
-version = '1.1'
+version = '1.2-SNAPSHOT' // 1.1 is released and has the NPE bug (#2), the fix is in the next version
 
 // Gradle itself requires JDK 17+, but the built plugin must work on Java 11+
 java {

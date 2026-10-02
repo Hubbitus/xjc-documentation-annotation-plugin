@@ -14,10 +14,14 @@ java {
 
 repositories {
 	mavenCentral()
+	if (project.hasProperty('useMavenLocal')) {
+		// To try the not yet released plugin, published by `./gradlew publishToMavenLocal` in the parent project
+		mavenLocal()
+	}
 }
 
 ext{
-	pluginVersion = '1.1'
+	pluginVersion = '1.2-SNAPSHOT' // Includes the fix of #2. Set to the released version (e.g. '1.2') once it is available on Maven Central
 }
 
 dependencies {

@@ -5,6 +5,7 @@ plugins {
 	id 'maven-publish'
 	id 'idea'
 	id 'signing'
+	id 'com.gradleup.nmcp' version '1.6.2' // Publishing into Maven Central via Central Portal API
 }
 
 group = 'info.hubbitus'
@@ -60,10 +61,8 @@ dependencies {
 }
 
 ///////////////////////////////////////////////////////////////
-// Artifacts publishing into central OSS repository
-// http://central.sonatype.org/pages/gradle.html
-def ossrhUserName = project.findProperty('ossrhUsername') ?: '' // To do not fail on CI when them does not defined
-def ossrhPassword = project.findProperty('ossrhPassword') ?: ''
+// Artifacts publishing into Maven Central (Sonatype Central Portal), see README "Release" section
+// https://central.sonatype.org/publish/publish-portal-gradle/
 
 java {
 	withJavadocJar()
@@ -104,25 +103,30 @@ publishing {
 			}
 		}
 	}
+}
 
-	repositories {
-		maven {
-			name = 'ossrh'
-			def releasesRepoUrl = uri('https://oss.sonatype.org/service/local/staging/deploy/maven2/')
-			def snapshotsRepoUrl = uri('https://oss.sonatype.org/content/repositories/snapshots/')
-			url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-			credentials {
-				username = ossrhUserName
-				password = ossrhPassword
-			}
-		}
+// Credentials are NOT required for regular builds, only when publishing:
+//   -PcentralPortalUsername / -PcentralPortalPassword (or ORG_GRADLE_PROJECT_centralPortalUsername/Password env variables) - Central Portal user token
+//   -PsigningKey / -PsigningPassword (or ORG_GRADLE_PROJECT_signingKey/signingPassword) - ASCII-armored PGP private key (in-memory) and its passphrase
+nmcp {
+	publishAllPublicationsToCentralPortal {
+		username = providers.gradleProperty('centralPortalUsername')
+		password = providers.gradleProperty('centralPortalPassword')
+		// USER_MANAGED: deployment is validated and uploaded, then must be published manually in the Portal UI.
+		// Use AUTOMATIC (-PcentralPortalPublishingType=AUTOMATIC) to release without confirmation.
+		publishingType = providers.gradleProperty('centralPortalPublishingType').orElse('USER_MANAGED')
 	}
 }
 
 signing {
-	required = { gradle.taskGraph.hasTask('publish') } // Do not require signing on CI/local builds
+	// Do not require signing on CI/local builds, only when publishing into Central Portal
+	required = { gradle.taskGraph.allTasks.any { it.name.startsWith('nmcpPublishAllPublicationsToCentralPortal') } }
+	def signingKey = providers.gradleProperty('signingKey').orNull
+	if (signingKey) {
+		useInMemoryPgpKeys(signingKey, providers.gradleProperty('signingPassword').orNull)
+	}
 	sign publishing.publications.mavenJava
 }
 
-// /Artifacts publishing into central OSS repository
+// /Artifacts publishing into Maven Central
 ////////////////////////////////////////////////////

@@ -117,6 +117,32 @@ Run tests:
 
     ./gradlew test
 
+Gradle itself needs JDK 17+, the plugin is compiled for Java 11. To run tests on a specific JVM (it must be installed, Gradle toolchains are used):
+
+    ./gradlew test -PtestJavaVersion=11
+
+## Release
+
+Artifacts are published into Maven Central through the [Sonatype Central Portal](https://central.sonatype.com) (the old OSSRH `oss.sonatype.org` is shut down)
+with the [nmcp](https://github.com/GradleUp/nmcp) Gradle plugin.
+
+One-time setup:
+
+1. Sign in to https://central.sonatype.com, make sure the namespace `info.hubbitus` is verified, and generate a *user token* (Account -> Generate User Token).
+2. Have a PGP key whose public part is uploaded to a key server (e.g. `keys.openpgp.org`). Export the private key with `gpg --armor --export-secret-keys <KEYID>`.
+3. Add repository secrets `CENTRAL_PORTAL_USERNAME`, `CENTRAL_PORTAL_PASSWORD` (the token parts), `SIGNING_KEY` (the armored private key) and `SIGNING_PASSWORD`.
+
+Release:
+
+1. Set the release version in [build.gradle](build.gradle) (drop `-SNAPSHOT`) and in `pluginVersion` of [example-project-gradle](example-project-gradle/build.gradle), merge it.
+2. Run the *Release* workflow (Actions -> Release). With `USER_MANAGED` (default) the deployment is uploaded and validated, then confirm it on https://central.sonatype.com/publishing/deployments. `AUTOMATIC` releases immediately.
+3. Bump to the next `-SNAPSHOT` version.
+
+The same can be done locally:
+
+    ./gradlew nmcpPublishAllPublicationsToCentralPortal \
+        -PcentralPortalUsername=... -PcentralPortalPassword=... -PsigningKey="$(gpg --armor --export-secret-keys <KEYID>)" -PsigningPassword=...
+
 ## Rationale (why it is born)
 For our integration we have task load big amount of `XSD` files into `MDM` software (proprietary [Unidata](https://unidata-platform.com/)).
 

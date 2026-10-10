@@ -1,0 +1,33 @@
+name: Release
+
+# Publishes the plugin into Maven Central via Sonatype Central Portal.
+# By default deployment is only uploaded and validated (USER_MANAGED): confirm it manually at https://central.sonatype.com/publishing/deployments
+# Required repository secrets: CENTRAL_PORTAL_USERNAME, CENTRAL_PORTAL_PASSWORD (Portal user token),
+#                              SIGNING_KEY (ASCII-armored PGP private key), SIGNING_PASSWORD
+on:
+  workflow_dispatch:
+    inputs:
+      publishing-type:
+        description: 'USER_MANAGED (confirm in Portal UI) or AUTOMATIC (release immediately)'
+        type: choice
+        options: [ USER_MANAGED, AUTOMATIC ]
+        default: USER_MANAGED
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Check and publish
+        run: ./gradlew check nmcpPublishAllPublicationsToCentralPortal
+        env:
+          ORG_GRADLE_PROJECT_centralPortalUsername: ${{ secrets.CENTRAL_PORTAL_USERNAME }}
+          ORG_GRADLE_PROJECT_centralPortalPassword: ${{ secrets.CENTRAL_PORTAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_centralPortalPublishingType: ${{ inputs.publishing-type }}
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}

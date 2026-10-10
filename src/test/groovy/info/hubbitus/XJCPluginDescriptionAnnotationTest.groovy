@@ -110,4 +110,50 @@ class XJCPluginDescriptionAnnotationTest extends Specification {
 			cls.getDeclaredFields().find{ 'name' == it.name }.getAnnotation(XsdInfo).name() == 'Фамилия и имя'
 			cls.getDeclaredFields().find{ 'age' == it.name }.getAnnotation(XsdInfo).name() == 'Возраст'
 	}
+
+	/**
+	 * https://github.com/Hubbitus/xjc-documentation-annotation-plugin/issues/2
+	 */
+	def "XSD without documentation (or without annotation) must not cause NPE"(){
+		setup:
+			File generatedClassesDir = new File(this.getClass().getResource('/').getPath() + 'generated-classes-nodoc')
+			generatedClassesDir.mkdir()
+		when:
+			int res = Driver.run(
+				[
+					'-npa'
+					,'-no-header'
+					,'-XPluginDescriptionAnnotation'
+					,'-d', generatedClassesDir.absolutePath
+					,'-p', 'info.hubbitus.generated.nodoc'
+					,this.getClass().getResource('/NoDocumentation.xsd')
+				] as String[]
+				,new XJCListener() {
+					@Override void error(SAXParseException e) { throw new IllegalStateException(e) }
+					@Override void fatalError(SAXParseException e) { throw new IllegalStateException(e) }
+					@Override void warning(SAXParseException e) { log.warn("SAX Parse warning: ", e) }
+					@Override void info(SAXParseException e) { log.info("SAX Parse information: ", e) }
+				}
+			)
+		then:
+			res == 0
+
+		when:
+			JavaCompiler compiler = ToolProvider.getSystemJavaCompiler()
+			int compileRes = compiler.run(null, null, null,
+				new File(generatedClassesDir, '/info/hubbitus/generated/nodoc/NoDoc.java').absolutePath,
+				new File(generatedClassesDir, '/info/hubbitus/generated/nodoc/NoAnnotation.java').absolutePath
+			)
+			ClassLoader cl = new URLClassLoader([generatedClassesDir.toURI().toURL()] as URL[])
+			Class noDoc = cl.loadClass('info.hubbitus.generated.nodoc.NoDoc')
+			Class noAnnotation = cl.loadClass('info.hubbitus.generated.nodoc.NoAnnotation')
+		then:
+			compileRes == 0
+			noDoc.getDeclaredAnnotation(XsdInfo).name() == ''
+			noDoc.getDeclaredFields().find{ 'withoutAnnotation' == it.name }.getAnnotation(XsdInfo).name() == ''
+			noDoc.getDeclaredFields().find{ 'onlyAppinfo' == it.name }.getAnnotation(XsdInfo).name() == ''
+			noDoc.getDeclaredFields().find{ 'attrOnlyAppinfo' == it.name }.getAnnotation(XsdInfo).name() == ''
+			noDoc.getDeclaredFields().find{ 'attrWithoutAnnotation' == it.name }.getAnnotation(XsdInfo).name() == ''
+			noAnnotation.getDeclaredAnnotation(XsdInfo).name() == ''
+	}
 }

@@ -13,6 +13,7 @@ import com.sun.codemodel.JFormatter;
  */
 public class JStringLiteralUnescaped extends JExpressionImpl {
 
+    /** Raw (not yet quoted and escaped) string value of this literal. */
     public final String str;
 
 

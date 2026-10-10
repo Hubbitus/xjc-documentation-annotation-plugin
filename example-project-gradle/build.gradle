@@ -1,58 +1,56 @@
 plugins {
 	id 'java'
-	id 'org.unbroken-dome.xjc' version '1.4.1' // https://github.com/unbroken-dome/gradle-xjc-plugin
+	id 'com.github.bjornvester.xjc' version '1.9.1' // https://github.com/bjornvester/xjc-gradle-plugin
 	id 'idea'
 	id 'groovy' // For Spock tests
 }
 
-group 'info.hubbitus'
-version '1.0-SNAPSHOT'
+group = 'info.hubbitus'
+version = '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.8
+java {
+	toolchain { languageVersion = JavaLanguageVersion.of(11) }
+}
 
 repositories {
 	mavenCentral()
+	if (project.hasProperty('useMavenLocal')) {
+		// To try the not yet released plugin, published by `./gradlew publishToMavenLocal` in the parent project
+		mavenLocal()
+	}
 }
 
 ext{
-	pluginVersion = '1.1'
+	pluginVersion = '1.2-SNAPSHOT' // Includes the fix of #2. Set to the released version (e.g. '1.2') once it is available on Maven Central
 }
 
 dependencies {
-	xjcClasspath "info.hubbitus:xjc-documentation-annotation-plugin:$pluginVersion"
+	xjcPlugins "info.hubbitus:xjc-documentation-annotation-plugin:$pluginVersion"
 
 	// Compile dependency for annotations used
-	compile "info.hubbitus:xjc-documentation-annotation-plugin:$pluginVersion"
-	testCompile "info.hubbitus:xjc-documentation-annotation-plugin:$pluginVersion"
+	implementation "info.hubbitus:xjc-documentation-annotation-plugin:$pluginVersion"
+	testImplementation "info.hubbitus:xjc-documentation-annotation-plugin:$pluginVersion"
 
 	// Tests
-	testCompile 'org.codehaus.groovy:groovy:2.5.5'
-	testCompile 'org.spockframework:spock-core:1.2-groovy-2.5'
+	testImplementation 'org.apache.groovy:groovy:5.1.3'
+	testImplementation 'org.spockframework:spock-core:2.4-groovy-5.0'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher' // Required by Gradle 9 (version is managed by Spock BOM)
 }
 
-// Results will be in directory `src/main/generated-java`
-xjcGenerate {
+tasks.withType(Test).configureEach {
+	useJUnitPlatform() // Spock 2
+}
+
+// Results will be in directory `build/generated/sources/xjc/java`
+xjc {
 	/**
 	 * There:
 	 * 1. Example.xsd is minimal example of functional.
 	 * 2. maven-4.0.0.xsd - example by SOq https://stackoverflow.com/questions/42223784/how-can-i-generate-a-class-from-which-i-can-retrieve-the-xml-of-a-node-as-a-stri
 	 */
-	source = fileTree('src/main/resources') { include '*.xsd' }
-	bindingFiles = fileTree('src/main/jaxb') { include '*.xjb' }
-	outputDirectory = file('src/main/generated-java')
-	packageLevelAnnotations = false
-	targetPackage = 'info.hubbitus.xjc.plugin.example'
-	extraArgs = [ '-XPluginDescriptionAnnotation' ]
+	xsdDir = layout.projectDirectory.dir('src/main/resources')
+	bindingFiles = fileTree('src/main/resources') { include '*.xjb' }
+	useJakarta = false // The plugin is built on javax (JAXB 2.x) XJC API
+	defaultPackage = 'info.hubbitus.xjc.plugin.example'
+	options = [ '-XPluginDescriptionAnnotation' ]
 }
-
-// Add generated files into compilation:
-// https://stackoverflow.com/questions/36749015/how-do-i-get-intellij-to-recognize-gradle-generated-sources-dir/44740130#44740130
-sourceSets.main.java.srcDir new File(buildDir, xjcGenerate.outputDirectory.absolutePath)
-idea {
-	module {
-		// Marks the already(!) added srcDir as "generated"
-		generatedSourceDirs += xjcGenerate.outputDirectory
-	}
-}
-
-compileTestGroovy.dependsOn xjcGenerate
